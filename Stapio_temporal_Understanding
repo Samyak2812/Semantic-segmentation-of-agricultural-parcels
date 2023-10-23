@@ -38,7 +38,6 @@ class SpatioTemporalModel(nn.Module):
         return output
 
 # Load and preprocess your spatio-temporal dataset
-# Implement data loading, preprocessing, and splitting for spatial and temporal data
 
 # Define data loaders for spatial and temporal data
 spatial_data_loader = DataLoader(spatial_dataset, batch_size=32, shuffle=True)
