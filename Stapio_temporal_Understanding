@@ -1,0 +1,82 @@
+import os
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import DataLoader
+from sklearn.model_selection import train_test_split
+
+# Define a model that combines CNN and LSTM
+class SpatioTemporalModel(nn.Module):
+    def __init__(self):
+        super(SpatioTemporalModel, self).__init()
+        # Define the CNN architecture for spatial data (image patches)
+        self.cnn = nn.Sequential(
+            # Define CNN layers here
+        )
+        # Define the LSTM for temporal data (time series of images)
+        self.lstm = nn.LSTM(input_size=hidden_size, hidden_size=num_lstm_units, num_layers=num_lstm_layers)
+        self.fc = nn.Linear(num_lstm_units, num_classes)
+
+    def forward(self, x):
+        # Split data into spatial and temporal components
+        spatial_data = x['spatial']  # Input spatial data (images)
+        temporal_data = x['temporal']  # Input temporal data (image sequences over time)
+
+        # Process spatial data using the CNN
+        spatial_features = self.cnn(spatial_data)
+
+        # Process temporal data using LSTM
+        temporal_features, _ = self.lstm(temporal_data)
+
+        # Combine spatial and temporal features
+        combined_features = torch.cat((spatial_features, temporal_features[-1]), dim=1)
+
+        # Perform final classification
+        output = self.fc(combined_features)
+
+        return output
+
+# Load and preprocess your spatio-temporal dataset
+# Implement data loading, preprocessing, and splitting for spatial and temporal data
+
+# Define data loaders for spatial and temporal data
+spatial_data_loader = DataLoader(spatial_dataset, batch_size=32, shuffle=True)
+temporal_data_loader = DataLoader(temporal_dataset, batch_size=32, shuffle=True)
+
+# Create the SpatioTemporalModel
+model = SpatioTemporalModel()
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.Adam(model.parameters(), lr=0.001)
+
+# Training loop
+for epoch in range(num_epochs):
+    model.train()
+    for spatial_batch, temporal_batch in zip(spatial_data_loader, temporal_data_loader):
+        spatial_data, spatial_labels = spatial_batch
+        temporal_data, temporal_labels = temporal_batch
+
+        optimizer.zero_grad()
+
+        # Prepare input data
+        input_data = {
+            'spatial': spatial_data,
+            'temporal': temporal_data
+        }
+
+        output = model(input_data)
+        loss = criterion(output, spatial_labels)
+
+        loss.backward()
+        optimizer.step()
+
+    # Validation and performance evaluation
+    model.eval()
+    with torch.no_grad():
+        # Implement evaluation and metric calculations here
+
+    # Print or log performance metrics
+    print(f"Epoch {epoch+1}/{num_epochs}, Loss: {loss.item()}, Other Metrics: {metrics}")
+
+# Save the trained model
+torch.save(model.state_dict(), 'spatio_temporal_model.pth')
