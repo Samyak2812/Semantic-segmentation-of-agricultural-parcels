@@ -1,0 +1,45 @@
+import os
+import geopandas as gpd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Set the dataset directory
+data_dir = 'path_to_dataset_directory'
+
+# Load geospatial data into a GeoDataFrame
+gdf = gpd.read_file(data_dir)
+
+# Visualize the distribution of a specific attribute (e.g., crop type) using a histogram
+plt.figure(figsize=(10, 6))
+sns.histplot(data=gdf, x='crop_type', kde=True)
+plt.title("Crop Type Distribution")
+plt.xlabel("Crop Type")
+plt.ylabel("Count")
+plt.xticks(rotation=45)
+plt.show()
+
+# Visualize the relationship between two attributes (e.g., temperature and precipitation) using a scatter plot
+plt.figure(figsize=(10, 6))
+sns.scatterplot(data=gdf, x='temperature', y='precipitation', hue='crop_type')
+plt.title("Temperature vs. Precipitation by Crop Type")
+plt.xlabel("Temperature")
+plt.ylabel("Precipitation")
+plt.show()
+
+# Visualize the probability distribution of a specific attribute using a probability density plot (KDE)
+plt.figure(figsize=(10, 6))
+sns.kdeplot(data=gdf, x='temperature', hue='crop_type', fill=True)
+plt.title("Temperature Distribution by Crop Type")
+plt.xlabel("Temperature")
+plt.ylabel("Density")
+plt.show()
+
+# Provide mathematical reasoning to support findings
+temperature_mean = gdf['temperature'].mean()
+temperature_std = gdf['temperature'].std()
+print(f"Temperature Mean: {temperature_mean:.2f}")
+print(f"Temperature Standard Deviation: {temperature_std:.2f}")
+
+# You can also perform statistical tests or correlations as needed to support your findings
+
+print("Data visualization complete.")
