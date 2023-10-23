@@ -1,0 +1,77 @@
+import os
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torchvision import transforms
+from torch.utils.data import DataLoader
+from sklearn.model_selection import train_test_split
+from torchvision.datasets import ImageFolder
+from torchvision.transforms import ToTensor
+
+# Define the U-Net architecture for semantic segmentation
+class UNet(nn.Module):
+    # Define the U-Net architecture here
+
+# Data augmentation for training
+train_transforms = transforms.Compose([
+    transforms.RandomHorizontalFlip(),
+    transforms.RandomVerticalFlip(),
+    transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),
+    transforms.RandomRotation(degrees=90),
+    transforms.ToTensor(),
+])
+
+# Data preprocessing for validation and testing
+val_test_transforms = transforms.Compose([transforms.ToTensor()])
+
+# Load and split the dataset into training and validation
+data_dir = 'path_to_dataset_directory'
+image_files = os.listdir(os.path.join(data_dir, 'images'))
+label_files = os.listdir(os.path.join(data_dir, 'labels'))
+X_train, X_val, y_train, y_val = train_test_split(image_files, label_files, test_size=0.2)
+
+# Define data loaders
+train_dataset = ImageFolder(data_dir, transform=train_transforms)
+val_dataset = ImageFolder(data_dir, transform=val_test_transforms)
+train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
+val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False)
+
+# Create and train the U-Net model for semantic segmentation
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+model = UNet(in_channels=3, out_channels=num_classes).to(device)
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.Adam(model.parameters(), lr=0.001)
+
+# Training loop
+for epoch in range(num_epochs):
+    model.train()
+    for images, labels in train_loader:
+        images, labels = images.to(device), labels.to(device)
+        optimizer.zero_grad()
+        outputs = model(images)
+        loss = criterion(outputs, labels)
+        loss.backward()
+        optimizer.step()
+
+    # Validation
+    model.eval()
+    with torch.no_grad():
+        total_iou = 0
+        total_pixel_accuracy = 0
+        for images, labels in val_loader:
+            images, labels = images.to(device), labels.to(device)
+            outputs = model(images)
+            predicted = outputs.argmax(1)
+            iou = calculate_iou(predicted, labels)
+            pixel_accuracy = calculate_pixel_accuracy(predicted, labels)
+            total_iou += iou
+            total_pixel_accuracy += pixel_accuracy
+
+        avg_iou = total_iou / len(val_loader)
+        avg_pixel_accuracy = total_pixel_accuracy / len(val_loader)
+
+        print(f"Epoch {epoch+1}/{num_epochs}, Loss: {loss.item()}, IoU: {avg_iou}, Pixel Acc: {avg_pixel_accuracy}")
+
+# Save the trained model
+torch.save(model.state_dict(), 'unet_model.pth')
