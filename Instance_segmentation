@@ -1,0 +1,101 @@
+import os
+import sys
+import random
+import math
+import numpy as np
+import skimage.io
+import matplotlib
+import matplotlib.pyplot as plt
+
+from mrcnn import utils
+from mrcnn import model as modellib
+from mrcnn import visualize
+from mrcnn.config import Config
+
+# Root directory of the Mask RCNN
+ROOT_DIR = os.path.abspath("Mask_RCNN")
+
+# Import Mask RCNN
+sys.path.append(ROOT_DIR)
+import mrcnn.model as modellib
+from mrcnn import visualize
+
+# Directory to save logs and trained model
+MODEL_DIR = os.path.join(ROOT_DIR, "logs")
+
+# Path to trained weights file
+COCO_MODEL_PATH = os.path.join(ROOT_DIR, "mask_rcnn_coco.h5")
+
+# Local path to trained weights file
+AGRICULTURAL_MODEL_PATH = "path_to_trained_model.h5"
+
+class AgriculturalConfig(Config):
+    NAME = "agricultural"
+    IMAGES_PER_GPU = 2
+    NUM_CLASSES = 1 + 1  # Background + Agricultural Parcel
+
+# Load dataset
+class AgriculturalDataset(utils.Dataset):
+    def load_agricultural(self, dataset_dir, subset):
+        self.add_class("agricultural", 1, "agricultural")
+        
+        image_dir = os.path.join(dataset_dir, "images")
+        mask_dir = os.path.join(dataset_dir, "masks")
+
+        # List all image files
+        file_names = next(os.walk(image_dir))[2]
+
+        for i, file_name in enumerate(file_names):
+            if i % 2 == 0 and subset == "train":
+                image_path = os.path.join(image_dir, file_name)
+                mask_path = os.path.join(mask_dir, file_name)
+                self.add_image("agricultural", image_id=i, path=image_path, mask_path=mask_path)
+
+    def load_mask(self, image_id):
+        image_info = self.image_info[image_id]
+        mask_path = image_info["mask_path"]
+
+        mask = skimage.io.imread(mask_path)
+
+        return mask, np.ones([mask.shape[-1]], dtype=np.int32)
+
+# Create Model
+config = AgriculturalConfig()
+model = modellib.MaskRCNN(mode="training", config=config, model_dir=MODEL_DIR)
+
+# Load weights
+model.load_weights(COCO_MODEL_PATH, by_name=True, exclude=["mrcnn_class_logits", "mrcnn_bbox_fc", "mrcnn_bbox", "mrcnn_mask"])
+model.load_weights(AGRICULTURAL_MODEL_PATH, by_name=True)
+
+# Training dataset
+dataset_train = AgriculturalDataset()
+dataset_train.load_agricultural("path_to_dataset_directory", "train")
+dataset_train.prepare()
+
+# Validation dataset
+dataset_val = AgriculturalDataset()
+dataset_val.load_agricultural("path_to_dataset_directory", "val")
+dataset_val.prepare()
+
+# Training
+model.train(dataset_train, dataset_val, learning_rate=config.LEARNING_RATE, epochs=30, layers='heads')
+
+# Save trained model
+model_path = "path_to_save_trained_model.h5"
+model.keras_model.save_weights(model_path)
+
+# Test on a random image
+image_id = random.choice(dataset_val.image_ids)
+original_image, image_meta, gt_class_id, gt_bbox, gt_mask = modellib.load_image_gt(dataset_val, config, image_id, use_mini_mask=False)
+
+log("original_image", original_image)
+log("image_meta", image_meta)
+log("gt_class_id", gt_class_id)
+log("gt_bbox", gt_bbox)
+log("gt_mask", gt_mask)
+
+results = model.detect([original_image], verbose=1)
+
+r = results[0]
+visualize.display_instances(original_image, r['rois'], r['masks'], r['class_ids'], dataset_val.class_names, r['scores'])
+
