@@ -1,0 +1,41 @@
+import os
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torchvision import transforms
+from torch.utils.data import DataLoader
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+from sklearn.metrics import average_precision_score
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import jaccard_score
+from sklearn.metrics import precision_recall_curve
+
+# Define U-Net architecture for semantic segmentation
+class UNet(nn.Module):
+    # Define U-Net architecture here
+
+# Define data preprocessing and loading
+data_transform = transforms.Compose([
+    transforms.ToTensor(),
+    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+])
+
+# Load and split the dataset based on the 5-fold split metadata
+data_dir = 'path_to_dataset_directory'
+# Implement loading and splitting of data based on the 5-fold split metadata
+
+# Define data loaders for semantic segmentation
+train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
+val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False)
+test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
+
+# Create and train the U-Net model for semantic segmentation
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+model = UNet(in_channels=3, out_channels=num_classes).to(device)
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.Adam(model.parameters(), lr=0.001)
+
+# Training loop for semantic segmentation
+for epoch in range(num_epochs):
