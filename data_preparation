@@ -34,9 +34,7 @@ images_dir = os.path.join(data_dir, 'pastis-benchmark-master', 'data', 'images')
 labels_dir = os.path.join(data_dir, 'pastis-benchmark-master', 'data', 'labels')
 
 # Organize the dataset into the desired structure for semantic segmentation
-# You can rename and structure the data according to your specific needs
-# For example, you can create separate directories for 'train', 'val', and 'test'
-# and move image-label pairs into corresponding subdirectories
+
 
 # Example: Organize into 'train', 'val', and 'test' directories
 train_dir = os.path.join(data_dir, 'train')
@@ -49,7 +47,6 @@ os.makedirs(val_dir)
 os.makedirs(test_dir)
 
 # Move a portion of the data into the 'train', 'val', and 'test' directories
-# This is just an example, you should adjust the ratio as needed
 for i, (image_file, label_file) in enumerate(zip(sorted(os.listdir(images_dir)), sorted(os.listdir(labels_dir))):
     if i % 5 == 0:
         shutil.copy(os.path.join(images_dir, image_file), os.path.join(test_dir, image_file))
