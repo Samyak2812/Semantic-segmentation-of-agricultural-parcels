@@ -1,0 +1,76 @@
+import os
+import geopandas as gpd
+import rasterio
+from rasterio.windows import from_bounds
+import shutil
+from urllib.request import urlretrieve
+
+# Define the URL of the dataset
+dataset_url = 'https://github.com/VSainteuf/pastis-benchmark/archive/refs/heads/master.zip'
+
+# Define the directory where you want to save the dataset
+download_dir = 'path_to_download_directory'
+
+# Define the directory where you want to organize the dataset
+data_dir = 'path_to_data_directory'
+
+# Create the necessary directories
+if not os.path.exists(download_dir):
+    os.makedirs(download_dir)
+if not os.path.exists(data_dir):
+    os.makedirs(data_dir)
+
+# Download the dataset
+zip_filename = os.path.join(download_dir, 'pastis-benchmark.zip')
+urlretrieve(dataset_url, zip_filename)
+
+# Unzip the dataset
+unzip_dir = os.path.join(data_dir, 'pastis-benchmark')
+shutil.unpack_archive(zip_filename, unzip_dir)
+
+# Define the directory where the geospatial data is located
+geospatial_data_dir = os.path.join(unzip_dir, 'pastis-benchmark-master', 'data', 'geospatial_data')
+
+# List all files in the geospatial data directory
+geospatial_files = os.listdir(geospatial_data_dir)
+
+# Initialize a list to keep track of duplicate images
+duplicate_images = set()
+
+# Iterate through geospatial files and identify duplicates
+for filename in geospatial_files:
+    if filename not in duplicate_images:
+        for other_filename in geospatial_files:
+            if filename != other_filename and filename.split("_")[0] == other_filename.split("_")[0]:
+                duplicate_images.add(filename)
+
+# Define the directory where you want to store the cleaned data
+cleaned_data_dir = 'path_to_cleaned_data_directory'
+
+# Create the cleaned data directory
+if not os.path.exists(cleaned_data_dir):
+    os.makedirs(cleaned_data_dir)
+
+# Copy non-duplicate geospatial files to the cleaned data directory
+for filename in geospatial_files:
+    if filename not in duplicate_images:
+        source_path = os.path.join(geospatial_data_dir, filename)
+        destination_path = os.path.join(cleaned_data_dir, filename)
+        shutil.copyfile(source_path, destination_path)
+
+# Define a function to extract valuable insights from geospatial data
+def process_geospatial_data(geospatial_file):
+    with rasterio.open(geospatial_file, 'r') as src:
+        # Implement your data processing and insights extraction here
+        # You can work with the raster data using src.read(), src.meta, etc.
+        # Consider using geopandas for vector data, if applicable
+
+# Iterate through the cleaned geospatial data
+for filename in os.listdir(cleaned_data_dir):
+    geospatial_file = os.path.join(cleaned_data_dir, filename)
+    process_geospatial_data(geospatial_file)
+
+# Clean up by removing the downloaded ZIP file
+os.remove(zip_filename)
+
+print("Big_data_Analysis is complete.")
