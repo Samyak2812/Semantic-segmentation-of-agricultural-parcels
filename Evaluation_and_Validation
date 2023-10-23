@@ -24,6 +24,7 @@ data_transform = transforms.Compose([
 
 # Load and split the dataset based on the 5-fold split metadata
 data_dir = 'path_to_dataset_directory'
+
 # Implement loading and splitting of data based on the 5-fold split metadata
 
 # Define data loaders for semantic segmentation
