@@ -1,0 +1,67 @@
+import os
+import shutil
+import requests
+from zipfile import ZipFile
+
+# Define the URL of the dataset
+dataset_url = 'https://github.com/VSainteuf/pastis-benchmark/archive/refs/heads/master.zip'
+
+# Define the directory where you want to save the dataset
+download_dir = 'path_to_download_directory'
+
+# Define the directory where you want to organize the dataset
+data_dir = 'path_to_data_directory'
+
+# Create the necessary directories
+if not os.path.exists(download_dir):
+    os.makedirs(download_dir)
+if not os.path.exists(data_dir):
+    os.makedirs(data_dir)
+
+# Download the dataset
+zip_filename = os.path.join(download_dir, 'pastis-benchmark.zip')
+response = requests.get(dataset_url, stream=True)
+with open(zip_filename, 'wb') as zip_file:
+    shutil.copyfileobj(response.raw, zip_file)
+del response
+
+# Unzip the dataset
+with ZipFile(zip_filename, 'r') as zip_ref:
+    zip_ref.extractall(data_dir)
+
+# Define paths for images and labels
+images_dir = os.path.join(data_dir, 'pastis-benchmark-master', 'data', 'images')
+labels_dir = os.path.join(data_dir, 'pastis-benchmark-master', 'data', 'labels')
+
+# Organize the dataset into the desired structure for semantic segmentation
+# You can rename and structure the data according to your specific needs
+# For example, you can create separate directories for 'train', 'val', and 'test'
+# and move image-label pairs into corresponding subdirectories
+
+# Example: Organize into 'train', 'val', and 'test' directories
+train_dir = os.path.join(data_dir, 'train')
+val_dir = os.path.join(data_dir, 'val')
+test_dir = os.path.join(data_dir, 'test')
+
+# Create the necessary directories
+os.makedirs(train_dir)
+os.makedirs(val_dir)
+os.makedirs(test_dir)
+
+# Move a portion of the data into the 'train', 'val', and 'test' directories
+# This is just an example, you should adjust the ratio as needed
+for i, (image_file, label_file) in enumerate(zip(sorted(os.listdir(images_dir)), sorted(os.listdir(labels_dir))):
+    if i % 5 == 0:
+        shutil.copy(os.path.join(images_dir, image_file), os.path.join(test_dir, image_file))
+        shutil.copy(os.path.join(labels_dir, label_file), os.path.join(test_dir, label_file))
+    elif i % 5 == 1:
+        shutil.copy(os.path.join(images_dir, image_file), os.path.join(val_dir, image_file))
+        shutil.copy(os.path.join(labels_dir, label_file), os.path.join(val_dir, label_file))
+    else:
+        shutil.copy(os.path.join(images_dir, image_file), os.path.join(train_dir, image_file))
+        shutil.copy(os.path.join(labels_dir, label_file), os.path.join(train_dir, label_file))
+
+# Clean up by removing the downloaded ZIP file
+os.remove(zip_filename)
+
+print("Data preparation is complete.")
