@@ -1,0 +1,26 @@
+import geopandas as gpd
+import matplotlib.pyplot as plt
+
+# Load the PASTIS benchmark dataset
+data = gpd.read_file(“C:\Users\Samyakj\Documents\Dataset”)
+
+# Define agricultural parcel categories
+agricultural_categories = ['Wheat', 'Corn', 'Soybean']
+
+# Initialize an empty list to store parcel boundaries
+parcel_boundaries = []
+
+# Iterate through the dataset
+for index, row in data.iterrows():
+    if row['Crop_Type'] in agricultural_categories:
+        # Extract the geometry representing the parcel boundary
+        boundary = row['geometry']
+        parcel_boundaries.append(boundary)
+
+# Visualize the parcel boundaries on a map
+ax = data.plot()
+gpd.GeoSeries(parcel_boundaries).plot(ax=ax, color='none', edgecolor='red', linewidth=2)
+plt.title('Agricultural Parcel Boundaries')
+plt.xlabel('Longitude')
+plt.ylabel('Latitude')
+plt.show()
