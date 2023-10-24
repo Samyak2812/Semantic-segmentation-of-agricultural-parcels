@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 # Set the path to the geospatial data directory
-data_dir = 'path_to_geospatial_data_directory'
+data_dir = 'C:\Users\Samyakj\Documents\Dataset\Data'
 
 # Load the geospatial data into a GeoDataFrame
 gdf = gpd.read_file(data_dir)
