@@ -27,7 +27,7 @@ MODEL_DIR = os.path.join(ROOT_DIR, "logs")
 COCO_MODEL_PATH = os.path.join(ROOT_DIR, "mask_rcnn_coco.h5")
 
 # Local path to trained weights file
-AGRICULTURAL_MODEL_PATH = "path_to_trained_model.h5"
+AGRICULTURAL_MODEL_PATH = "C:\Users\Samyakj\Documents\Dataset\Data\model.h5"
 
 class AgriculturalConfig(Config):
     NAME = "agricultural"
@@ -81,7 +81,7 @@ dataset_val.prepare()
 model.train(dataset_train, dataset_val, learning_rate=config.LEARNING_RATE, epochs=30, layers='heads')
 
 # Save trained model
-model_path = "path_to_save_trained_model.h5"
+model_path = "C:\Users\Samyakj\Documents\Dataset\Data\model.h5"
 model.keras_model.save_weights(model_path)
 
 # Test on a random image
