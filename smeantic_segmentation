@@ -33,7 +33,7 @@ data_transform = transforms.Compose([
 ])
 
 # Load and split the dataset into train and validation sets
-data_dir = 'C:\Users\Samyakj\Documents\Dataset'
+data_dir = 'C:\Users\Samyakj\Documents\Dataset\Data'
 image_files = os.listdir(os.path.join(data_dir, 'images'))
 label_files = os.listdir(os.path.join(data_dir, 'labels'))
 X_train, X_val, y_train, y_val = train_test_split(image_files, label_files, test_size=0.2)
