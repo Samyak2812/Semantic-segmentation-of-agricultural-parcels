@@ -23,7 +23,7 @@ data_transform = transforms.Compose([
 ])
 
 # Load and split the dataset based on the 5-fold split metadata
-data_dir = 'path_to_dataset_directory'
+data_dir = 'C:\Users\Samyakj\Documents\Dataset\Data'
 
 # Implement loading and splitting of data based on the 5-fold split metadata
 
