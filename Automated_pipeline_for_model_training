@@ -24,7 +24,7 @@ data_transform = transforms.Compose([
 ])
 
 # Set the dataset directory
-data_dir = 'path_to_dataset_directory'
+data_dir = 'C:\Users\Samyakj\Documents\Dataset\Data'
 
 # Load the dataset and split it into training and validation
 image_datasets = ImageFolder(data_dir, transform=data_transform)
