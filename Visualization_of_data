@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Set the dataset directory
-data_dir = 'path_to_dataset_directory'
+data_dir = 'C:\Users\Samyakj\Documents\Dataset\Data'
 
 # Load geospatial data into a GeoDataFrame
 gdf = gpd.read_file(data_dir)
