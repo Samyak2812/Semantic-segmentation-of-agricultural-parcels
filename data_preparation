@@ -7,10 +7,10 @@ from zipfile import ZipFile
 dataset_url = 'https://github.com/VSainteuf/pastis-benchmark/archive/refs/heads/master.zip'
 
 # Define the directory where you want to save the dataset
-download_dir = 'path_to_download_directory'
+download_dir = 'C:\Users\Samyakj\Documents\Dataset'
 
 # Define the directory where you want to organize the dataset
-data_dir = 'path_to_data_directory'
+data_dir = 'C:\Users\Samyakj\Documents\Dataset\Data'
 
 # Create the necessary directories
 if not os.path.exists(download_dir):
